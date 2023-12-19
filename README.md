@@ -8,6 +8,8 @@ Project made with **[João Iria](https://github.com/JoaoIria)** and **[Leonor Fe
 
 [Link to the Configuration Code](https://drive.google.com/file/d/1JrAgT1xDyd3u4wu1t7YFLxS1r_ucYhVe/view?usp=drive_link)
 
+
 [Link to the Configuration Files](https://drive.google.com/file/d/1Ka7e5IBqZpu4aBx2aJGF0lYjUx2gcd9i/view?usp=sharing)
+
 
 [Link to the Assignment](https://github.com/joaoafs/NetworkArchitecture/blob/main/enunciado-intermedio.pdf)
