@@ -1,0 +1,64 @@
+conf t
+router ospf 1
+redistribute bgp 49 subnets
+redistribute connected subnets
+router-id 3.3.3.3
+network 194.49.2.0 0.0.0.127 area 0
+end
+wr
+
+conf t
+int f0/1
+ip address 194.49.2.3 255.255.255.128
+no shutdown
+int f0/0
+ip address 172.16.4.3 255.255.255.248
+no shutdown
+end
+wr
+
+conf t
+ip dhcp pool VLAN1
+network 10.49.8.0 255.255.255.0
+default-router 10.49.8.6
+
+ip dhcp pool VLAN10
+network 10.49.9.0 255.255.255.0
+default-router 10.49.9.6
+
+ip dhcp pool VLAN20
+network 10.49.10.0 255.255.255.0
+default-router 10.49.10.6
+
+ip dhcp pool VLAN30
+network 10.49.11.0 255.255.255.0
+default-router 10.49.11.6
+
+ip dhcp pool Subnet194
+network 194.49.2.0 255.255.255.128
+default-router 194.49.2.6 
+
+end
+write memory
+
+
+conf t
+router bgp 49
+redistribute ospf 1
+neighbor 172.16.4.2 remote-as 42
+neighbor 172.16.4.4 remote-as 49
+neighbor 172.16.4.3 next-hop-self
+network 172.16.4.0 mask 255.255.255.248
+end
+wr
+
+
+conf t
+access-list 1 deny 10.49.8.0 0.0.0.255
+access-list 1 deny 10.49.9.0 0.0.0.255
+access-list 1 deny 10.49.10.0 0.0.0.255
+access-list 1 deny 10.49.11.0 0.0.0.255
+access-list 1 permit any
+exit
+end
+wr

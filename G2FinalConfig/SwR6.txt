@@ -1,0 +1,114 @@
+vlan database
+vlan 10
+apply
+vlan 20
+apply
+vlan 30
+apply
+exit
+
+conf t
+ip routing
+end
+wr
+
+conf t 
+int f1/0
+switchport mode trunk
+int f1/1
+switchport mode trunk
+
+interface range FastEthernet1/3 - 5
+switchport access vlan 10
+exit
+
+interface range FastEthernet1/6 - 9
+switchport access vlan 20
+exit
+
+interface range FastEthernet1/10 - 12
+switchport access vlan 30
+exit
+
+interface Vlan1
+ip address 10.49.8.6 255.255.255.0
+ip nat inside
+no shutdown
+exit
+
+interface Vlan10
+ip address 10.49.9.6 255.255.255.0
+ip nat inside
+no shutdown
+exit
+
+interface Vlan20
+ip address 10.49.10.6 255.255.255.0
+ip nat inside
+no shutdown
+exit
+
+interface Vlan30
+ip address 10.49.11.6 255.255.255.0
+ip nat inside
+no shutdown
+exit
+end
+write memory
+
+
+conf t
+router ospf 1
+router-id 6.6.6.6
+network 194.49.2.0 0.0.0.127 area 0
+network 172.16.5.0 0.0.0.7 area 0
+network 172.16.4.0 0.0.0.7 area 0
+network 172.16.3.0 0.0.0.7 area 0
+network 172.16.2.0 0.0.0.7 area 0
+network 10.49.8.0 0.0.0.255 area 0
+network 10.49.9.0 0.0.0.255 area 0
+network 10.49.10.0 0.0.0.255 area 0
+network 10.49.11.0 0.0.0.255 area 0
+end
+wr
+
+
+conf t
+service dhcp
+
+interface Vlan1
+ip helper-address 194.49.2.3
+
+interface Vlan10
+ip helper-address 194.49.2.3
+
+interface Vlan20
+ip helper-address 194.49.2.3
+
+interface Vlan30
+ip helper-address 194.49.2.3
+end
+write memory
+
+
+conf t
+
+interface f0/0
+ip address 194.49.2.6 255.255.255.128
+ip nat outside
+no shutdown
+exit
+
+ip nat pool NATPOOL 194.49.2.1 194.49.2.62 netmask 255.255.255.192
+ip nat inside source list 1 pool NATPOOL overload
+access-list 1 permit 10.49.8.0 0.0.0.255
+access-list 1 permit 10.49.9.0 0.0.0.255
+access-list 1 permit 10.49.10.0 0.0.0.255
+access-list 1 permit 10.49.11.0 0.0.0.255
+access-list 1 permit 172.16.2.0 0.0.0.7
+access-list 1 permit 172.16.3.0 0.0.0.7
+access-list 1 permit 172.16.4.0 0.0.0.7
+access-list 1 permit 172.16.5.0 0.0.0.7
+
+end
+write memory

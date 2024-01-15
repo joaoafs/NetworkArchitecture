@@ -1,0 +1,54 @@
+conf t
+router ospf 1
+router-id 4.4.4.4
+network 10.49.8.0 0.0.0.255 area 0
+network 10.49.9.0 0.0.0.255 area 0
+network 10.49.10.0 0.0.0.255 area 0
+network 10.49.11.0 0.0.0.255 area 0
+end
+wr
+
+conf t
+int f0/1
+no ip address
+no shutdown
+int f0/0
+ip address 172.16.4.4 255.255.255.248
+no shutdown
+int f1/0
+ip address 172.16.5.4 255.255.255.248
+no shutdown
+
+interface FastEthernet0/1.1
+encapsulation dot1Q 1
+ip address 10.49.8.4 255.255.255.0 
+no shutdown
+
+interface FastEthernet0/1.10
+encapsulation dot1Q 10
+ip address 10.49.9.4 255.255.255.0 
+no shutdown
+
+interface FastEthernet0/1.20
+encapsulation dot1Q 20
+ip address 10.49.10.4 255.255.255.0
+no shutdown
+
+interface FastEthernet0/1.30
+encapsulation dot1Q 30
+ip address 10.49.11.4 255.255.255.0
+no shutdown
+end 
+wr
+
+
+conf t
+router bgp 49
+neighbor 172.16.4.3 remote-as 49
+neighbor 172.16.4.2 remote-as 42
+neighbor 172.16.5.5 remote-as 45
+neighbor 172.16.4.3 next-hop-self
+network 172.16.4.0 mask 255.255.255.248
+network 172.16.5.0 mask 255.255.255.248
+end
+wr

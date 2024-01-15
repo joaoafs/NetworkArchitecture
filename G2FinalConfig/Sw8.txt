@@ -1,0 +1,50 @@
+vlan database
+vlan 10
+apply
+vlan 20
+apply
+vlan 30
+apply
+exit
+
+conf t
+no ip routing
+
+int f1/0
+switchport mode trunk
+int f1/1
+switchport mode trunk
+
+interface range FastEthernet1/3 - 5
+switchport access vlan 10
+exit
+
+interface range FastEthernet1/6 - 9
+switchport access vlan 20
+exit
+
+interface range FastEthernet1/10 - 12
+switchport access vlan 30
+exit
+
+interface Vlan1
+ip address 10.49.8.8 255.255.255.0
+no shutdown
+exit
+
+interface Vlan10
+ip address 10.49.9.8 255.255.255.0
+no shutdown
+exit
+
+interface Vlan20
+ip address 10.49.10.8 255.255.255.0
+no shutdown
+exit
+
+interface Vlan30
+ip address 10.49.11.8 255.255.255.0
+no shutdown
+exit
+end
+write memory

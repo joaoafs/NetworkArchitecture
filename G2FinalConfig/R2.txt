@@ -1,0 +1,58 @@
+conf t
+ipv6 unicast-routing
+int f0/0
+ip address 172.16.2.2 255.255.255.248
+ipv6 address 2001:db8:42:20::2/64
+no shutdown
+int f0/1
+ip address 172.16.4.2 255.255.255.248
+ipv6 address 2001:db8:42:21::2/64
+no shutdown
+int loopback 0
+ip address 194.42.2.2 255.255.255.0
+ipv6 address 2001:db8:42:22::2/64
+no shutdown
+end
+wr
+
+conf t
+router bgp 42
+neighbor 172.16.2.1 remote-as 41
+neighbor 172.16.4.3 remote-as 49
+neighbor 172.16.4.4 remote-as 49
+network 194.42.2.0 mask 255.255.255.0
+network 172.16.2.0 mask 255.255.255.248
+network 172.16.4.0 mask 255.255.255.248
+
+redistribute connected
+end
+wr
+
+conf t
+router bgp 42
+redistribute ospf 1
+end
+wr
+
+conf t
+ipv6 router ospf 1
+router-id 2.2.2.2
+interface f0/0
+ipv6 ospf 1 area 0
+interface f0/1
+ipv6 ospf 1 area 0
+interface loopback 0
+ipv6 ospf 1 area 0
+end
+wr
+
+conf t
+router bgp 42
+address-family ipv6
+neighbor 2001:db8:41:20::1/64 remote-as 41
+network 2001:db8:42:20::/64
+network 2001:db8:42:21::/64
+network 2001:db8:42:22::/64
+exit-address-family
+end
+wr

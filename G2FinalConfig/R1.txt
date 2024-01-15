@@ -1,0 +1,63 @@
+conf t
+ipv6 unicast-routing
+int f0/0
+ip address 172.16.2.1 255.255.255.248
+ipv6 address 2001:db8:41:20::1/64
+ipv6 ospf 1 area 0
+no shutdown
+int s1/0
+ip address 172.16.3.1 255.255.255.248
+ipv6 address 2001:db8:41:21::1/64
+ipv6 ospf 1 area 0
+no shutdown
+int loopback 0
+ip address 194.41.2.1 255.255.255.0
+ipv6 address 2001:db8:41:22::1/64
+ipv6 ospf 1 area 0
+no shutdown
+end
+wr
+
+conf t
+router bgp 41
+neighbor 172.16.2.2 remote-as 42
+neighbor 172.16.3.5 remote-as 45
+network 194.41.2.0 mask 255.255.255.0
+network 172.16.2.0 mask 255.255.255.248
+network 172.16.3.0 mask 255.255.255.248
+end
+wr
+
+conf t
+router bgp 41
+redistribute ospf 1
+address-family ipv6
+neighbor 2001:db8:41:20::2 remote-as 42
+neighbor 2001:db8:41:21::5 remote-as 45
+network 2001:db8:41:20::/64
+network 2001:db8:41:21::/64
+network 2001:db8:41:22::/64
+end
+wr
+
+conf t
+ipv6 router ospf 1
+router-id 1.1.1.1
+interface f0/0
+ipv6 ospf 1 area 0
+interface s1/0
+ipv6 ospf 1 area 0
+interface loopback 0
+ipv6 ospf 1 area 0
+end 
+wr
+
+conf t
+ip dns server
+ip domain-lookup
+ip domain name ar.org
+ip host rafa.ar.org 194.45.100.2
+ip host angel.ar.org 194.45.100.3
+ip name-server 194.41.2.1
+end
+wr
